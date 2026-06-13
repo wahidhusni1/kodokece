@@ -14,7 +14,6 @@ class Nuha_BTD_Admin_Menu {
     }
 
     public function add_admin_menu() {
-        // Menu Utama
         add_menu_page(
             __('Buku Tamu Digital', 'nuha-buku-tamu-digital'),
             __('Buku Tamu', 'nuha-buku-tamu-digital'),
@@ -25,7 +24,6 @@ class Nuha_BTD_Admin_Menu {
             30
         );
 
-        // Submenu: Daftar Tamu
         add_submenu_page(
             'nuha-buku-tamu',
             __('Daftar Tamu', 'nuha-buku-tamu-digital'),
@@ -35,17 +33,15 @@ class Nuha_BTD_Admin_Menu {
             array($this, 'render_guests_page')
         );
 
-        // Submenu: Scan QR (Untuk Resepsionis)
         add_submenu_page(
             'nuha-buku-tamu',
             __('Scan QR', 'nuha-buku-tamu-digital'),
             __('Scan QR', 'nuha-buku-tamu-digital'),
-            'edit_posts', // Bisa diakses oleh editor juga
+            'edit_posts',
             'nuha-buku-tamu-scan',
             array($this, 'render_scan_page')
         );
 
-        // Submenu: Pengaturan
         add_submenu_page(
             'nuha-buku-tamu',
             __('Pengaturan', 'nuha-buku-tamu-digital'),

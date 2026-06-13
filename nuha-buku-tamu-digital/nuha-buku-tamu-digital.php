@@ -15,32 +15,13 @@
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly
+    exit;
 }
 
 define('NUHA_BTD_VERSION', '1.0.0');
 define('NUHA_BTD_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('NUHA_BTD_PLUGIN_URL', plugin_dir_url(__FILE__));
 
-// Autoloader sederhana
-spl_autoload_register(function ($class) {
-    $prefix = 'Nuha_BTD_';
-    $base_dir = NUHA_BTD_PLUGIN_DIR . 'includes/';
-
-    $len = strlen($prefix);
-    if (strncmp($prefix, $class, $len) !== 0) {
-        return;
-    }
-
-    $relative_class = substr($class, $len);
-    $file = $base_dir . 'class-' . strtolower(str_replace('_', '-', $relative_class)) . '.php';
-
-    if (file_exists($file)) {
-        require $file;
-    }
-});
-
-// Inisialisasi Plugin
 class Nuha_Buku_Tamu_Digital {
 
     private static $instance = null;
@@ -58,22 +39,27 @@ class Nuha_Buku_Tamu_Digital {
     }
 
     private function load_dependencies() {
-        // Load file inti
         require_once NUHA_BTD_PLUGIN_DIR . 'includes/class-guest-manager.php';
         require_once NUHA_BTD_PLUGIN_DIR . 'includes/class-qr-generator.php';
         require_once NUHA_BTD_PLUGIN_DIR . 'includes/class-souvenir-manager.php';
         
-        // Load admin
         if (is_admin()) {
             require_once NUHA_BTD_PLUGIN_DIR . 'admin/class-admin-menu.php';
             require_once NUHA_BTD_PLUGIN_DIR . 'admin/class-admin-ajax.php';
+            new Nuha_BTD_Admin_Menu();
+            new Nuha_BTD_Admin_Ajax();
         }
 
-        // Load Elementor Widget jika Elementor aktif
         if (did_action('elementor/loaded')) {
             require_once NUHA_BTD_PLUGIN_DIR . 'widgets/class-elementor-guest-form-widget.php';
             require_once NUHA_BTD_PLUGIN_DIR . 'widgets/class-elementor-welcome-display-widget.php';
+            add_action('elementor/widgets/register', array($this, 'register_elementor_widgets'));
         }
+    }
+
+    public function register_elementor_widgets($widgets_manager) {
+        $widgets_manager->register(new Nuha_BTD_Elementor_Guest_Form_Widget());
+        $widgets_manager->register(new Nuha_BTD_Elementor_Welcome_Display_Widget());
     }
 
     private function init_hooks() {
@@ -83,20 +69,18 @@ class Nuha_Buku_Tamu_Digital {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
+        add_action('wp_ajax_nuha_btd_register_guest', array($this, 'handle_register_guest'));
+        add_action('wp_ajax_nopriv_nuha_btd_register_guest', array($this, 'handle_register_guest'));
     }
 
     public function init() {
         load_plugin_textdomain('nuha-buku-tamu-digital', false, dirname(plugin_basename(__FILE__)) . '/languages');
-        
-        // Register Custom Post Type untuk Tamu (Opsional, bisa pakai tabel custom)
-        // Untuk performa tinggi, kita akan menggunakan tabel custom di class Guest Manager
     }
 
     public function activate() {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
 
-        // Tabel Tamu
         $table_guests = $wpdb->prefix . 'nuha_guests';
         $sql_guests = "CREATE TABLE $table_guests (
             id bigint(20) NOT NULL AUTO_INCREMENT,
@@ -106,7 +90,7 @@ class Nuha_Buku_Tamu_Digital {
             phone varchar(20) DEFAULT '',
             photo_url varchar(255) DEFAULT '',
             visit_purpose text DEFAULT '',
-            status varchar(20) DEFAULT 'registered', -- registered, checked_in, checked_out
+            status varchar(20) DEFAULT 'registered',
             souvenir_claimed tinyint(1) DEFAULT 0,
             souvenir_claim_time datetime DEFAULT NULL,
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
@@ -116,12 +100,11 @@ class Nuha_Buku_Tamu_Digital {
             KEY status (status)
         ) $charset_collate;";
 
-        // Tabel Log Aktivitas
         $table_logs = $wpdb->prefix . 'nuha_activity_logs';
         $sql_logs = "CREATE TABLE $table_logs (
             id bigint(20) NOT NULL AUTO_INCREMENT,
             guest_id bigint(20) NOT NULL,
-            action varchar(50) NOT NULL, -- scan_qr, check_in, claim_souvenir
+            action varchar(50) NOT NULL,
             details text DEFAULT '',
             ip_address varchar(45) DEFAULT '',
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
@@ -133,7 +116,6 @@ class Nuha_Buku_Tamu_Digital {
         dbDelta($sql_guests);
         dbDelta($sql_logs);
 
-        // Opsi default
         add_option('nuha_btd_version', NUHA_BTD_VERSION);
         add_option('nuha_btd_welcome_message', 'Selamat Datang, {name}!');
         add_option('nuha_btd_souvenir_enabled', 'yes');
@@ -143,7 +125,38 @@ class Nuha_Buku_Tamu_Digital {
 
     public function deactivate() {
         flush_rewrite_rules();
-        // Jangan hapus data saat deaktivasi
+    }
+
+    public function handle_register_guest() {
+        check_ajax_referer('nuha_btd_nonce', 'nonce');
+
+        $full_name = sanitize_text_field($_POST['full_name'] ?? '');
+        $company = sanitize_text_field($_POST['company'] ?? '');
+        $phone = sanitize_text_field($_POST['phone'] ?? '');
+        $visit_purpose = sanitize_textarea_field($_POST['visit_purpose'] ?? '');
+
+        if (empty($full_name)) {
+            wp_send_json_error(array('message' => 'Nama lengkap wajib diisi'));
+        }
+
+        $guest_manager = new Nuha_BTD_Guest_Manager();
+        $result = $guest_manager->register_guest(array(
+            'full_name' => $full_name,
+            'company' => $company,
+            'phone' => $phone,
+            'visit_purpose' => $visit_purpose
+        ));
+
+        if ($result['success']) {
+            $qr_generator = new Nuha_BTD_QR_Generator();
+            wp_send_json_success(array(
+                'guest_id' => $result['guest_id'],
+                'qr_code' => $result['qr_code'],
+                'qr_code_url' => $qr_generator->generate_qr_image_url($result['qr_code'])
+            ));
+        } else {
+            wp_send_json_error(array('message' => $result['error']));
+        }
     }
 
     public function enqueue_assets() {
@@ -157,7 +170,6 @@ class Nuha_Buku_Tamu_Digital {
     }
 
     public function enqueue_admin_assets($hook) {
-        // Hanya load di halaman plugin ini
         if (strpos($hook, 'nuha-buku-tamu') === false) {
             return;
         }
@@ -166,7 +178,6 @@ class Nuha_Buku_Tamu_Digital {
     }
 }
 
-// Jalankan Plugin
 function nuha_buku_tamu_digital_init() {
     return Nuha_Buku_Tamu_Digital::get_instance();
 }

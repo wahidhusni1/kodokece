@@ -16,13 +16,9 @@ class Nuha_BTD_Souvenir_Manager {
         $this->guest_table = $wpdb->prefix . 'nuha_guests';
     }
 
-    /**
-     * Mencatat klaim souvenir untuk tamu
-     */
     public function claim_souvenir($qr_code) {
         global $wpdb;
 
-        // Cek apakah fitur souvenir aktif
         if (get_option('nuha_btd_souvenir_enabled') !== 'yes') {
             return array('success' => false, 'error' => 'Fitur souvenir tidak aktif');
         }
@@ -60,9 +56,6 @@ class Nuha_BTD_Souvenir_Manager {
         return array('success' => false, 'error' => 'Gagal mencatat klaim souvenir');
     }
 
-    /**
-     * Mendapatkan statistik souvenir
-     */
     public function get_souvenir_stats() {
         global $wpdb;
 
@@ -76,31 +69,6 @@ class Nuha_BTD_Souvenir_Manager {
             'remaining' => $remaining,
             'percentage' => $total_guests > 0 ? round(($claimed / $total_guests) * 100, 2) : 0
         );
-    }
-
-    /**
-     * Reset klaim souvenir (untuk admin jika terjadi kesalahan)
-     */
-    public function reset_claim($guest_id) {
-        global $wpdb;
-
-        $result = $wpdb->update(
-            $this->guest_table,
-            array(
-                'souvenir_claimed' => 0,
-                'souvenir_claim_time' => null
-            ),
-            array('id' => $guest_id),
-            array('%d', '%s'),
-            array('%d')
-        );
-
-        if ($result !== false) {
-            $this->log_activity($guest_id, 'reset_souvenir', 'Klaim souvenir direset oleh admin');
-            return true;
-        }
-
-        return false;
     }
 
     private function get_guest_by_qr($qr_code) {

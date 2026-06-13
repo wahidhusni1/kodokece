@@ -15,17 +15,16 @@
         <div class="nuha-stat-card" style="background: #fff; padding: 20px; border-left: 4px solid #d63638; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
             <h3 style="margin: 0; color: #666; font-size: 14px;">Souvenir Terklaim</h3>
             <p style="font-size: 36px; margin: 10px 0 0; font-weight: bold;"><?php echo number_format($souvenir_stats['claimed']); ?> / <?php echo number_format($souvenir_stats['total_guests']); ?></p>
-            <p style="font-size: 12px; color: #666;"><?php echo $souvenir_stats['percentage']; ?>%</p>
         </div>
     </div>
 
     <div class="nuha-quick-actions" style="margin: 30px 0;">
         <h2>Aksi Cepat</h2>
         <a href="<?php echo admin_url('admin.php?page=nuha-buku-tamu-scan'); ?>" class="button button-primary button-hero" style="margin-right: 10px;">
-            <span class="dashicons dashicons-camera" style="margin-top: 4px;"></span> Scan QR Code
+            Scan QR Code
         </a>
         <a href="<?php echo admin_url('admin.php?page=nuha-buku-tamu-guests'); ?>" class="button button-secondary button-hero">
-            <span class="dashicons dashicons-list-view" style="margin-top: 4px;"></span> Lihat Daftar Tamu
+            Lihat Daftar Tamu
         </a>
     </div>
 

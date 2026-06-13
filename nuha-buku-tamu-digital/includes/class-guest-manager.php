@@ -16,9 +16,6 @@ class Nuha_BTD_Guest_Manager {
         $this->table_name = $wpdb->prefix . 'nuha_guests';
     }
 
-    /**
-     * Mendaftarkan tamu baru dan menghasilkan QR Code
-     */
     public function register_guest($data) {
         global $wpdb;
 
@@ -47,9 +44,6 @@ class Nuha_BTD_Guest_Manager {
         return array('success' => false, 'error' => $wpdb->last_error);
     }
 
-    /**
-     * Mendapatkan data tamu berdasarkan QR Code
-     */
     public function get_guest_by_qr($qr_code) {
         global $wpdb;
         
@@ -61,9 +55,6 @@ class Nuha_BTD_Guest_Manager {
         return $guest;
     }
 
-    /**
-     * Melakukan Check-In tamu
-     */
     public function check_in($qr_code) {
         global $wpdb;
 
@@ -71,10 +62,6 @@ class Nuha_BTD_Guest_Manager {
         
         if (!$guest) {
             return array('success' => false, 'error' => 'Tamu tidak ditemukan');
-        }
-
-        if ($guest->status === 'checked_out') {
-             // Opsional: Izinkan check-in ulang atau tolak
         }
 
         $result = $wpdb->update(
@@ -93,9 +80,6 @@ class Nuha_BTD_Guest_Manager {
         return array('success' => false, 'error' => 'Gagal update status');
     }
 
-    /**
-     * Melakukan Check-Out tamu
-     */
     public function check_out($qr_code) {
         global $wpdb;
 
@@ -121,9 +105,6 @@ class Nuha_BTD_Guest_Manager {
         return array('success' => false, 'error' => 'Gagal update status');
     }
 
-    /**
-     * Mendapatkan semua tamu dengan filter
-     */
     public function get_guests($args = array()) {
         global $wpdb;
 
@@ -157,25 +138,15 @@ class Nuha_BTD_Guest_Manager {
         return $wpdb->get_results($sql);
     }
 
-    /**
-     * Menghitung total tamu
-     */
     public function count_guests($args = array()) {
         global $wpdb;
-        // Implementasi sederhana untuk counting
         return $wpdb->get_var("SELECT COUNT(*) FROM {$this->table_name}");
     }
 
-    /**
-     * Generate QR Code unik
-     */
     private function generate_unique_qr() {
-        return bin2hex(random_bytes(16)); // 32 karakter hex unik
+        return bin2hex(random_bytes(16));
     }
 
-    /**
-     * Mencatat aktivitas tamu
-     */
     private function log_activity($guest_id, $action, $details = '') {
         global $wpdb;
         $log_table = $wpdb->prefix . 'nuha_activity_logs';

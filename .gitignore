@@ -1,40 +1,26 @@
 ```
 # WordPress specific ignores
 wp-content/plugins/nuha-buku-tamu-digital/.DS_Store
-nuha-buku-tamu-digital/assets/css/*.min.css
-nuha-buku-tamu-digital/assets/js/*.min.js
-nuha-buku-tamu-digital/assets/css/style.css.map
-nuha-buku-tamu-digital/assets/js/main.js.map
-nuha-buku-tamu-digital/assets/css/admin.css.map
-nuha-buku-tamu-digital/assets/js/admin.js.map
-
-# Dependencies
-node_modules/
-vendor/
-
-# Logs and temp files
-*.log
-*.tmp
-*.swp
-
-# Environment
-.env
-.env.local
-*.env.*
-
-# Editors
-.vscode/
-.idea/
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Build artifacts
-dist/
-build/
-target/
-*.min.css
-*.min.js
-*.map
+nuha-buku-tamu-digital/*.log
+nuha-buku-tamu-digital/*.tmp
+nuha-buku-tamu-digital/__pycache__/
+nuha-buku-tamu-digital/*.pyc
+nuha-buku-tamu-digital/Thumbs.db
+nuha-buku-tamu-digital/.env
+nuha-buku-tamu-digital/.env.local
+nuha-buku-tamu-digital/.env.*
+nuha-buku-tamu-digital/node_modules/
+nuha-buku-tamu-digital/venv/
+nuha-buku-tamu-digital/.venv/
+nuha-buku-tamu-digital/.vscode/
+nuha-buku-tamu-digital/.idea/
+nuha-buku-tamu-digital/dist/
+nuha-buku-tamu-digital/build/
+nuha-buku-tamu-digital/target/
+nuha-buku-tamu-digital/.gradle/
+nuha-buku-tamu-digital/.mypy_cache/
+nuha-buku-tamu-digital/.pytest_cache/
+nuha-buku-tamu-digital/coverage/
+nuha-buku-tamu-digital/htmlcov/
+nuha-buku-tamu-digital/.coverage
 ```

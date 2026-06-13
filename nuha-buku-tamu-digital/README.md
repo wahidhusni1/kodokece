@@ -1,172 +1,117 @@
 # Nuha Buku Tamu Digital
 
-**Plugin WordPress untuk Sistem Buku Tamu Digital Berbasis QR Code**
+Plugin WordPress untuk sistem buku tamu digital berbasis QR Code dengan integrasi Elementor.
 
-Dikembangkan oleh **Nuha Labs Indonesia**
+## Fitur Utama
 
----
-
-## 📖 Deskripsi
-
-Nuha Buku Tamu Digital adalah plugin WordPress yang mengubah sistem buku tamu konvensional menjadi digital dengan teknologi QR Code. Plugin ini terintegrasi penuh dengan Elementor dan cocok untuk kantor, gedung pertemuan, hotel, event organizer, dan institusi lainnya.
-
-### ✨ Fitur Utama
-
-- **QR Code Unik**: Setiap tamu mendapatkan QR Code unik saat registrasi
+- **QR Code System**: Generate QR unik untuk setiap tamu
 - **Scan & Sapa**: Sistem otomatis mengenali tamu dan menampilkan sapaan di layar
-- **Check-In/Check-Out**: Pelacakan status kunjungan secara real-time
-- **Manajemen Souvenir**: Pencatatan pengambilan souvenir/cenderamata
-- **Dashboard Admin**: Statistik dan manajemen data tamu yang lengkap
-- **Ekspor Data**: Download data tamu ke format CSV/Excel
-- **Elementor Widgets**: Drag & drop widget untuk formulir dan display
-- **Mode Kiosk**: Tampilan optimal untuk tablet/layar sentuh
-- **Responsif**: Bekerja sempurna di semua perangkat
+- **Check-In/Check-Out**: Tracking status kunjungan real-time
+- **Manajemen Souvenir**: Pencatatan pengambilan dengan pencegahan klaim ganda
+- **Dashboard Admin**: Statistik lengkap (total tamu, hari ini, souvenir)
+- **Ekspor CSV**: Download data ke Excel
+- **Elementor Widgets**: 2 widget drag-and-drop (Formulir & Display TV)
+- **Security**: Nonce verification, input sanitization, SQL injection prevention
 
----
+## Instalasi
 
-## 🚀 Instalasi
-
-1. Upload folder `nuha-buku-tamu-digital` ke direktori `/wp-content/plugins/`
+1. Upload folder `nuha-buku-tamu-digital` ke `/wp-content/plugins/`
 2. Aktifkan plugin melalui menu 'Plugins' di WordPress
-3. Konfigurasi pengaturan di menu **Buku Tamu > Pengaturan**
-4. Tambahkan widget Elementor atau gunakan shortcode di halaman yang diinginkan
+3. Konfigurasi pengaturan di menu "Buku Tamu"
 
----
+## Cara Penggunaan
 
-## 📋 Cara Penggunaan
+### Untuk Admin:
+1. Buka menu **Buku Tamu** di dashboard WordPress
+2. Lihat statistik dan kelola data tamu
+3. Gunakan halaman **Scan QR** untuk check-in/check-out tamu
+4. Ekspor data ke CSV jika diperlukan
 
-### 1. Setup Awal
-- Buka **Buku Tamu > Pengaturan**
-- Atur pesan sapaan (gunakan `{name}` untuk nama tamu)
-- Aktifkan/nonaktifkan fitur souvenir
+### Untuk Web Designer (Elementor):
+1. Edit halaman dengan Elementor
+2. Drag widget **Nuha Guest Form** untuk formulir registrasi
+3. Drag widget **Nuha Welcome Display** untuk layar TV sapaan
 
-### 2. Menampilkan Formulir Registrasi
-**Opsi A - Elementor:**
-- Edit halaman dengan Elementor
-- Cari widget "Nuha Guest Form"
-- Drag & drop ke halaman
-- Sesuaikan pengaturan
+### Untuk Tamu:
+1. Isi formulir registrasi di website
+2. Dapatkan QR Code
+3. Scan QR di resepsionis untuk check-in
+4. Ambil souvenir (jika tersedia)
 
-**Opsi B - Shortcode:**
-```
-[nuha_guest_form]
-```
-
-### 3. Menampilkan Welcome Display (untuk TV/Monitor)
-**Opsi A - Elementor:**
-- Edit halaman dengan Elementor
-- Cari widget "Nuha Welcome Display"
-- Drag & drop ke halaman
-- Atur interval refresh dan gaya
-
-**Opsi B - Shortcode:**
-```
-[nuha_welcome_display]
-```
-
-### 4. Scan QR Code di Resepsionis
-- Buka menu **Buku Tamu > Scan QR**
-- Gunakan scanner USB atau ketik kode manual
-- Sistem akan menampilkan data tamu
-- Klik tombol Check-In, Klaim Souvenir, atau Check-Out sesuai kebutuhan
-
----
-
-## 🎯 Alur Kerja Sistem
-
-```
-┌─────────────┐     ┌──────────────┐     ┌─────────────┐
-│   Tamu      │────▶│  Registrasi  │────▶│  Dapat QR   │
-│   Datang    │     │   Online     │     │   Code      │
-└─────────────┘     └──────────────┘     └─────────────┘
-                                                │
-                                                ▼
-┌─────────────┐     ┌──────────────┐     ┌─────────────┐
-│   Pulang    │◀────│   Ambil      │◀────│  Check-In   │
-│  (Check-Out)│     │  Souvenir    │     │  (Scan QR)  │
-└─────────────┘     └──────────────┘     └─────────────┘
-```
-
----
-
-## 🛠️ Technical Requirements
-
-- WordPress 5.8 atau lebih tinggi
-- PHP 7.4 atau lebih tinggi
-- Database MySQL/MariaDB
-- Elementor (opsional, untuk widget)
-
----
-
-## 📁 Struktur File
+## Struktur Folder
 
 ```
 nuha-buku-tamu-digital/
-├── nuha-buku-tamu-digital.php    # File utama plugin
+├── nuha-buku-tamu-digital.php      # File utama plugin
 ├── includes/
-│   ├── class-guest-manager.php   # Manajemen data tamu
-│   ├── class-qr-generator.php    # Generator QR Code
-│   └── class-souvenir-manager.php # Manajemen souvenir
+│   ├── class-guest-manager.php      # Manajemen tamu
+│   ├── class-qr-generator.php       # Generator QR Code
+│   └── class-souvenir-manager.php   # Manajemen souvenir
 ├── admin/
-│   ├── class-admin-menu.php      # Menu admin
-│   ├── class-admin-ajax.php      # AJAX handlers
-│   └── views/
-│       ├── dashboard.php         # Dashboard view
-│       ├── guests.php            # Daftar tamu
-│       ├── scan.php              # Halaman scan QR
-│       └── settings.php          # Pengaturan
+│   ├── class-admin-menu.php         # Menu dashboard
+│   ├── class-admin-ajax.php         # AJAX handlers
+│   └── views/                       # View templates
 ├── widgets/
 │   ├── class-elementor-guest-form-widget.php
 │   └── class-elementor-welcome-display-widget.php
 ├── assets/
 │   ├── css/
-│   │   ├── style.css             # Frontend styles
-│   │   └── admin.css             # Admin styles
 │   └── js/
-│       ├── main.js               # Frontend JavaScript
-│       └── admin.js              # Admin JavaScript
-└── tests/                        # Unit tests (akan ditambahkan)
+└── tests/
+    └── test-nuha-buku-tamu.php      # Unit tests (15+ test cases)
 ```
 
----
+## Testing
 
-## 🔐 Keamanan
+Plugin ini dilengkapi dengan 15+ unit tests untuk memastikan kualitas kode:
 
-- Nonce verification untuk semua AJAX request
-- Capability checks untuk akses admin
-- SQL injection prevention dengan prepared statements
-- XSS protection dengan esc_html dan esc_attr
-- Input sanitization pada semua form
+```bash
+# Install WordPress Testing Environment
+# Copy file tests/test-nuha-buku-tamu.php ke folder tests plugin
+# Jalankan:
+phpunit
+```
 
----
+### Test Cases:
+1. Plugin constants defined
+2. Guest Manager instance created
+3. Register guest successfully
+4. QR Code generator creates valid URL
+5. QR Code image URL generated
+6. Get guest by QR code
+7. Check-in guest
+8. Check-out guest
+9. Check-in non-existent guest
+10. Claim souvenir
+11. Prevent double souvenir claim
+12. Get guests list
+13. Count guests
+14. Souvenir stats
+15. Search guests
 
-## 📝 Changelog
+## Requirements
 
-### Version 1.0.0
-- Rilis awal
-- Registrasi tamu dengan QR Code
-- Check-In/Check-Out system
-- Manajemen souvenir
-- Dashboard admin
-- Widget Elementor
-- Ekspor CSV
+- WordPress 5.8 atau lebih tinggi
+- PHP 7.4 atau lebih tinggi
+- Elementor (opsional, untuk widget)
 
----
+## Developer
 
-## 👨‍💻 Developer
+**Nuha Labs Indonesia**  
+Website: https://nuhalabs.id
 
-**Nuha Labs Indonesia**
-- Website: https://nuhalabs.id
-- Email: info@nuhalabs.id
-
----
-
-## 📄 License
+## License
 
 GPL v2 or later
 
----
+## Changelog
 
-## 🙏 Terima Kasih
-
-Terima kasih telah menggunakan Nuha Buku Tamu Digital. Plugin ini dikembangkan dengan ❤️ oleh tim Nuha Labs Indonesia.
+### Version 1.0.0
+- Initial release
+- QR Code registration system
+- Check-in/Check-out functionality
+- Souvenir management
+- Elementor integration
+- Admin dashboard with statistics
+- CSV export
+- Unit tests included

@@ -50,59 +50,11 @@ class Nuha_BTD_Elementor_Guest_Form_Widget extends Widget_Base {
         );
 
         $this->add_control(
-            'show_phone',
-            [
-                'label' => __('Tampilkan Kolom No. HP', 'nuha-buku-tamu-digital'),
-                'type' => Controls_Manager::SWITCHER,
-                'label_on' => __('Ya', 'nuha-buku-tamu-digital'),
-                'label_off' => __('Tidak', 'nuha-buku-tamu-digital'),
-                'return_value' => 'yes',
-                'default' => 'yes',
-            ]
-        );
-
-        $this->add_control(
-            'require_photo',
-            [
-                'label' => __('Wajib Upload Foto', 'nuha-buku-tamu-digital'),
-                'type' => Controls_Manager::SWITCHER,
-                'label_on' => __('Ya', 'nuha-buku-tamu-digital'),
-                'label_off' => __('Tidak', 'nuha-buku-tamu-digital'),
-                'return_value' => 'yes',
-                'default' => 'no',
-            ]
-        );
-
-        $this->add_control(
             'button_text',
             [
                 'label' => __('Teks Tombol', 'nuha-buku-tamu-digital'),
                 'type' => Controls_Manager::TEXT,
                 'default' => __('Daftar Sekarang', 'nuha-buku-tamu-digital'),
-                'placeholder' => __('Daftar Sekarang', 'nuha-buku-tamu-digital'),
-            ]
-        );
-
-        $this->end_controls_section();
-
-        // Style Section
-        $this->start_controls_section(
-            'style_section',
-            [
-                'label' => __('Gaya', 'nuha-buku-tamu-digital'),
-                'tab' => Controls_Manager::TAB_STYLE,
-            ]
-        );
-
-        $this->add_control(
-            'primary_color',
-            [
-                'label' => __('Warna Utama', 'nuha-buku-tamu-digital'),
-                'type' => Controls_Manager::COLOR,
-                'default' => '#2271b1',
-                'selectors' => [
-                    '{{WRAPPER}} .nuha-guest-form button[type="submit"]' => 'background-color: {{VALUE}}',
-                ],
             ]
         );
 
@@ -111,7 +63,6 @@ class Nuha_BTD_Elementor_Guest_Form_Widget extends Widget_Base {
 
     protected function render() {
         $settings = $this->get_settings_for_display();
-        
         ?>
         <div class="nuha-guest-form-wrapper">
             <form id="nuha-guest-form" class="nuha-guest-form">
@@ -124,13 +75,6 @@ class Nuha_BTD_Elementor_Guest_Form_Widget extends Widget_Base {
                 <div class="form-group">
                     <label for="guest-company"><?php _e('Instansi/Perusahaan', 'nuha-buku-tamu-digital'); ?></label>
                     <input type="text" id="guest-company" name="company">
-                </div>
-                <?php endif; ?>
-
-                <?php if ($settings['show_phone'] === 'yes'): ?>
-                <div class="form-group">
-                    <label for="guest-phone"><?php _e('No. WhatsApp/HP', 'nuha-buku-tamu-digital'); ?></label>
-                    <input type="tel" id="guest-phone" name="phone">
                 </div>
                 <?php endif; ?>
 
@@ -159,7 +103,6 @@ class Nuha_BTD_Elementor_Guest_Form_Widget extends Widget_Base {
                     nonce: nuhaBtdConfig.nonce,
                     full_name: $('#guest-name').val(),
                     company: $('#guest-company').val(),
-                    phone: $('#guest-phone').val(),
                     visit_purpose: $('#guest-purpose').val()
                 };
 
@@ -167,13 +110,11 @@ class Nuha_BTD_Elementor_Guest_Form_Widget extends Widget_Base {
                     const $msg = $('#form-message');
                     
                     if (response.success) {
-                        $msg.html('<p style="color: green;">Pendaftaran berhasil! Silakan scan QR Code yang telah dikirim.</p>');
-                        $('#nuha-guest-form')[0].reset();
-                        
-                        // Tampilkan QR Code jika ada
+                        $msg.html('<p style="color: green;">Pendaftaran berhasil! QR Code akan ditampilkan.</p>');
                         if (response.data.qr_code_url) {
                             $msg.append('<img src="' + response.data.qr_code_url + '" alt="QR Code" style="margin-top: 15px; max-width: 200px;">');
                         }
+                        $('#nuha-guest-form')[0].reset();
                     } else {
                         $msg.html('<p style="color: red;">' + (response.data.message || 'Terjadi kesalahan') + '</p>');
                     }
