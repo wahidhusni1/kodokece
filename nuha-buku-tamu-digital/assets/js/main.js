@@ -1,10 +1,8 @@
-// Nuha Buku Tamu Digital - Frontend JavaScript
-
+/**
+ * Nuha Buku Tamu Digital - Frontend JavaScript
+ */
 jQuery(document).ready(function($) {
-    // Form submission handled in widget
+    console.log('Nuha Buku Tamu Frontend loaded');
     
-    // Auto-hide messages after 5 seconds
-    setTimeout(function() {
-        $('.nuha-form-message').fadeOut();
-    }, 5000);
+    // Additional frontend functionality can be added here
 });
